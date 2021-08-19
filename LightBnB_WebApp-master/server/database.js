@@ -24,7 +24,7 @@ const getUserWithEmail = function(email) {
   .query(`SELECT * FROM users
           WHERE email = $1`, [email])
   .then(result => {
-    
+
     // if there is a user associated with the email, log them in
     if (result.rows[0]) return result.rows[0];
 
@@ -43,7 +43,23 @@ exports.getUserWithEmail = getUserWithEmail;
  * @return {Promise<{}>} A promise to the user.
  */
 const getUserWithId = function(id) {
-  return Promise.resolve(users[id]);
+
+  
+  return pool
+  .query(`SELECT * FROM users
+          WHERE id = $1`, [id])
+  .then(result => {
+
+    // if there is a user associated with the id, remain logged in on refresh
+    if (result.rows[0]) return result.rows[0];
+
+    // if there is no user for that id, return null
+    else return null;     
+    
+  })
+  .catch(error => console.log(error.message));
+
+  // return Promise.resolve(users[id]);
 }
 exports.getUserWithId = getUserWithId;
 
